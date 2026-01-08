@@ -2,6 +2,7 @@ defmodule Demo.Handler do
   import Demo.Parser, only: [parse: 1]
   import Demo.Plugins, only: [route_rewriting: 1, track: 1, log: 1]
 
+  alias Demo.Conv
   #Module Attributes
   @file_path Path.expand("../../pages", __DIR__)
 
@@ -20,27 +21,27 @@ defmodule Demo.Handler do
   # end
 
   # function clauses
-  def route(%{method: "GET", path: "/wildthings"} = conv) do
+  def route(%Conv{method: "GET", path: "/wildthings"} = conv) do
     %{conv | status_code: 200, resp_body: "Bears, Lions, Tigers"}
   end
 
   # function clauses
-  def route(%{method: "GET", path: "/bears"} = conv) do
+  def route(%Conv{method: "GET", path: "/bears"} = conv) do
     %{conv | status_code: 200, resp_body: "EENA, MEENA, DEKKA"}
   end
 
-  def route(%{method: "GET", path: "/bears" <> id} = conv) do
+  def route(%Conv{method: "GET", path: "/bears" <> id} = conv) do
     %{conv | status_code: 200, resp_body: "Bear #{id}"}
   end
 
-  def route(%{method: "GET", path: "/about"} = conv) do
+  def route(%Conv{method: "GET", path: "/about"} = conv) do
     @file_path
     |> Path.join("about.html")
     |> File.read()
     |> handleFile(conv)
   end
 
-  def route(%{path: path} = conv) do
+  def route(%Conv{path: path} = conv) do
     %{conv | status_code: 404, resp_body: "No #{path} Here !"}
   end
 
@@ -56,28 +57,17 @@ defmodule Demo.Handler do
     %{conv | status_code: 500, resp_body: "File Error #{reason}"}
   end
 
-  def format_response(conv) do
-    body = conv.resp_body
-    response_code = conv.status_code
-
+  def format_response(%Conv{} = conv) do
     """
-    HTTP/1.1 #{response_code} #{status_reason(response_code)}
+    HTTP/1.1 #{Conv.full_status(conv)}
     Content-Type: text/html
-    Content-Length: #{String.length(body)}
+    Content-Length: #{String.length(conv.resp_body)}
 
-    #{body}
+    #{conv.resp_body}
     """
   end
 
-  defp status_reason(code) do
-    %{
-      200 => "OK",
-      201 => "CREATED",
-      401 => "UNAUTHORIZED",
-      404 => "NOT FOUND",
-      500 => "INTERNAL SERVER ERROR"
-    }[code]
-  end
+
 end
 
 request = """
