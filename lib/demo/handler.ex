@@ -1,4 +1,5 @@
 defmodule Demo.Handler do
+  @file_path Path.expand("../../pages", __DIR__)
   def handle(request) do
     request
     |> parse
@@ -47,7 +48,7 @@ defmodule Demo.Handler do
   end
 
   def route(%{method: "GET", path: "/about"} = conv) do
-    Path.expand("../../pages", __DIR__)
+    @file_path
     |> Path.join("about.html")
     |> File.read
     |> handleFile(conv)
