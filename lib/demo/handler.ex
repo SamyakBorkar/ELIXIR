@@ -46,9 +46,31 @@ defmodule Demo.Handler do
     %{conv | status_code: 200, resp_body: "Bear #{id}"}
   end
 
+  def route(%{method: "GET", path: "/about"} = conv) do
+    Path.expand("../../pages", __DIR__)
+    |> Path.join("about.html")
+    |> File.read
+    |> handleFile(conv)
+
+  end
+
   def route(%{path: path} = conv) do
     %{conv | status_code: 404, resp_body: "No #{path} Here !"}
   end
+
+  def handleFile({:ok, content}, conv) do
+    %{conv | status_code: 200, resp_body: content}
+  end
+
+  def handleFile({:error, :enoent}, conv) do
+    %{conv | status_code: 404, resp_body: "File Not Found"}
+  end
+
+  def handleFile({:error, reason}, conv) do
+    %{conv | status_code: 500, resp_body: "File Error #{reason}"}
+  end
+
+
 
   def track(%{path: path, status_code: 404} = conv) do
     IO.puts("Warning #{path} is on loose!")
@@ -127,6 +149,17 @@ IO.puts(response)
 
 request = """
 GET /wildlife HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+response = Demo.Handler.handle(request)
+IO.puts(response)
+
+request = """
+GET /about HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
