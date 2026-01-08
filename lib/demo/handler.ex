@@ -17,10 +17,17 @@ defmodule Demo.Handler do
     %{method: method, path: path, resp_body: ""}
   end
 
-  def log(conv), do: IO.inspect(conv) #value of print ke saath saath return bhi krta h ye 
+  def log(conv), do: IO.inspect(conv) #value of print ke saath saath return bhi krta h ye
 
   def route(conv) do
+    route(conv, conv.path)
+  end
+  def route(conv, "/wildthings") do       #function clauses
     %{conv | resp_body: "Bears, Lions, Tigers"}
+  end
+
+  def route(conv, "/bears") do            #function clauses
+    %{conv | resp_body: "EENA, MEENA, DEKKA"}
   end
 
   def format_response(conv) do
@@ -38,6 +45,17 @@ end
 
 request = """
 GET /wildthings HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+response = Demo.Handler.handle(request)
+IO.puts(response)
+
+request = """
+GET /bears HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
