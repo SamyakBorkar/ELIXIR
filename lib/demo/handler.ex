@@ -1,5 +1,10 @@
 defmodule Demo.Handler do
+  import Demo.Parser, only: [parse: 1]
+  import Demo.Plugins, only: [route_rewriting: 1, track: 1, log: 1]
+
+  #Module Attributes
   @file_path Path.expand("../../pages", __DIR__)
+
   def handle(request) do
     request
     |> parse
@@ -9,25 +14,6 @@ defmodule Demo.Handler do
     |> track
     |> format_response
   end
-
-  def parse(request) do
-    [method, path, _] =
-      request
-      |> String.split("\n")
-      |> List.first()
-      |> String.split(" ")
-
-    %{method: method, path: path, resp_body: "", status_code: nil}
-  end
-
-  # route rewriting is done here if anyone is hiting with a wildlife route he will be rerouted to wildthing route
-  def route_rewriting(%{path: "/wildlife"} = conv) do
-    %{conv | path: "/wildthings"}
-  end
-
-  def route_rewriting(conv), do: conv
-  # value of print ke saath saath return bhi krta h ye
-  def log(conv), do: IO.inspect(conv)
 
   # def route(conv) do
   #   route(conv, conv.method, conv.path)
@@ -43,16 +29,15 @@ defmodule Demo.Handler do
     %{conv | status_code: 200, resp_body: "EENA, MEENA, DEKKA"}
   end
 
-  def route(%{method: "GET", path: "/bears"<>id} = conv) do
+  def route(%{method: "GET", path: "/bears" <> id} = conv) do
     %{conv | status_code: 200, resp_body: "Bear #{id}"}
   end
 
   def route(%{method: "GET", path: "/about"} = conv) do
     @file_path
     |> Path.join("about.html")
-    |> File.read
+    |> File.read()
     |> handleFile(conv)
-
   end
 
   def route(%{path: path} = conv) do
@@ -70,15 +55,6 @@ defmodule Demo.Handler do
   def handleFile({:error, reason}, conv) do
     %{conv | status_code: 500, resp_body: "File Error #{reason}"}
   end
-
-
-
-  def track(%{path: path, status_code: 404} = conv) do
-    IO.puts("Warning #{path} is on loose!")
-    conv
-  end
-
-  def track(conv), do: conv
 
   def format_response(conv) do
     body = conv.resp_body
