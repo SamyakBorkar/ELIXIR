@@ -3,6 +3,7 @@ defmodule Demo.Handler do
   import Demo.Plugins, only: [route_rewriting: 1, track: 1, log: 1]
 
   alias Demo.Conv
+  alias Demo.BearController
   #Module Attributes
   @file_path Path.expand("../../pages", __DIR__)
 
@@ -22,7 +23,8 @@ defmodule Demo.Handler do
 
   # function clauses
   def route(%Conv{method: "GET", path: "/wildthings"} = conv) do
-    %{conv | status_code: 200, resp_body: "Bears, Lions, Tigers"}
+    # %{conv | status_code: 200, resp_body: "Bears, Lions, Tigers"}
+    BearController.show(conv)
   end
 
   # function clauses
