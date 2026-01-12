@@ -4,7 +4,7 @@ defmodule Demo.Handler do
 
   alias Demo.Conv
   alias Demo.BearController
-  #Module Attributes
+  # Module Attributes
   @file_path Path.expand("../../pages", __DIR__)
 
   def handle(request) do
@@ -44,6 +44,16 @@ defmodule Demo.Handler do
     |> handleFile(conv)
   end
 
+  def route(%Conv{method: "GET", path: "/hibernate/" <> time} = conv) do
+    time |> String.to_integer() |> :timer.sleep()
+
+    %{conv | status_code: 200, resp_body: "Awake!"}
+  end
+
+  def route(%Conv{method: "GET", path: "/kaboom"} = conv) do
+    raise "Kaboom!"
+  end
+
   def route(%Conv{path: path} = conv) do
     %{conv | status_code: 404, resp_body: "No #{path} Here !"}
   end
@@ -69,8 +79,6 @@ defmodule Demo.Handler do
     #{conv.resp_body}
     """
   end
-
-
 end
 
 request = """
