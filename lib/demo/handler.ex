@@ -28,8 +28,9 @@ defmodule Demo.Handler do
   end
 
   # function clauses
-  def route(%Conv{method: "GET", path: "/api/bears"} = conv) do
-    Demo.Api.BearController.index(conv)
+  def route(%Conv{method: "GET", path: "/bears"} = conv) do
+    # Demo.Api.BearController.index(conv)
+    BearController.show(conv)
   end
 
   def route(%Conv{method: "GET", path: "/bears" <> id} = conv) do
