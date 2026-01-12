@@ -1,7 +1,10 @@
 defmodule Demo.Plugins do
   alias Demo.Conv
+
   def track(%Conv{path: path, status_code: 404} = conv) do
-    IO.puts("Warning #{path} is on loose!")
+    if Mix.env != :test do
+      IO.puts("Warning #{path} is on loose!")
+    end
     conv
   end
 
@@ -14,5 +17,11 @@ defmodule Demo.Plugins do
 
   def route_rewriting(%Conv{} = conv), do: conv
   # value of print ke saath saath return bhi krta h ye
-  def log(conv), do: IO.inspect(conv)
+  def log(conv) do
+    if Mix.env() == :dev do
+      IO.inspect(conv)
+    end
+
+    conv
+  end
 end

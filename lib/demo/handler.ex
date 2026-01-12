@@ -28,8 +28,8 @@ defmodule Demo.Handler do
   end
 
   # function clauses
-  def route(%Conv{method: "GET", path: "/bears"} = conv) do
-    %{conv | status_code: 200, resp_body: "EENA, MEENA, DEKKA"}
+  def route(%Conv{method: "GET", path: "/api/bears"} = conv) do
+    Demo.Api.BearController.index(conv)
   end
 
   def route(%Conv{method: "GET", path: "/bears" <> id} = conv) do

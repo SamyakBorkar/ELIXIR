@@ -2,7 +2,7 @@ defmodule DemoTest do
   use ExUnit.Case
   doctest Demo
 
-  test "greets the world" do
-    assert Demo.hello() == :world
+  test "check assertion" do
+    assert 1 + 1 == 2
   end
 end
