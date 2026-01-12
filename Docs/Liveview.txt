@@ -1,0 +1,17 @@
+liveview has 3 imp states 
+    1. mount
+    2. handle event 
+    3. Render
+
+
+socket are assigned and are a struct 
+
+socket = assign(socket, :brightness, 100)
+
+if we want to update the socket we can simple use the update function 
+update(socket, :brightness, annyms function)
+
+
+after every assign and initial mount render is called '
+
+--------------------------INTRO COMPLETED --------------------------------------
